@@ -12,4 +12,12 @@
   - Execute PoST request to get add employee to the hierarchy
   - URL: localhost:8080/employee 
   - Use Basic Auth with username: 'user' and password: '12345678'
-  - Body - use the body from the example   
+  - Body
+  ```
+    {
+      "Pete":"Nick",
+      "Barbara":"Nick",
+      "Nick":"Sophie",
+      "Sophie":"Jonas"
+    }
+  ```
