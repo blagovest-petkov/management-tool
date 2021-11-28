@@ -15,11 +15,6 @@ class EmployeeController(val employeeService: EmployeeService) {
 
     var logger: Logger = LoggerFactory.getLogger(EmployeeController::class.java)
 
-    @GetMapping("/test")
-    fun getTestMessage(): String {
-        return "This is a test message"
-    }
-
     @GetMapping
     @ResponseBody
     fun getEmployeeHierarchy(): EmployeeDTO {
