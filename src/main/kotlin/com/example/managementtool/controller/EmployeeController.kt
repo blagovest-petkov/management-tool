@@ -1,6 +1,5 @@
 package com.example.managementtool.controller
 
-import com.example.managementtool.dto.EmployeeCreationDTO
 import com.example.managementtool.dto.EmployeeDTO
 import com.example.managementtool.service.EmployeeService
 import org.slf4j.Logger
@@ -28,7 +27,7 @@ class EmployeeController(val employeeService: EmployeeService) {
     }
 
     @PostMapping
-    fun addEmployees(@RequestBody employeeSupervisorMap: Map<String, String>?): ResponseEntity<String>  {
+    fun addEmployees(@RequestBody employeeSupervisorMap: Map<String, String>?): ResponseEntity<String> {
         try {
             employeeService.addEmployees(employeeSupervisorMap)
             return ResponseEntity.status(HttpStatus.CREATED).body("Employees added successfully")

@@ -1,6 +1,6 @@
 package com.example.managementtool.dto
 
-import com.example.managementtool.config.EmployeeDTOSerializer
+import com.example.managementtool.dto.serializer.EmployeeDTOSerializer
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 @JsonSerialize(using = EmployeeDTOSerializer::class)

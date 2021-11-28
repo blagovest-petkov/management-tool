@@ -1,15 +1,12 @@
 package com.example.managementtool.service
 
 import com.example.managementtool.dto.EmployeeDTO
-import com.example.managementtool.exception.AmbiguousHierarchyException
 import com.example.managementtool.model.Employee
 import com.example.managementtool.repository.EmployeeNativeRepository
-import com.example.managementtool.repository.EmployeeRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.sqlite.SQLiteException
 import java.sql.SQLException
 
 @Service

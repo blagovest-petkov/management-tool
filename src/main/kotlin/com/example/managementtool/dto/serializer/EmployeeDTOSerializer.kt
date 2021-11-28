@@ -1,4 +1,4 @@
-package com.example.managementtool.config
+package com.example.managementtool.dto.serializer
 
 import com.example.managementtool.dto.EmployeeDTO
 import com.fasterxml.jackson.core.JsonGenerator
