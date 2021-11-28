@@ -1,6 +1,6 @@
 # HR management tool
 
-## How to run guide
+## How to run - Guide
 
 - Open terminal<br>
 - Run folowing command: docker run -p8080:8080 management tool:latest
