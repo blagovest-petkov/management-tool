@@ -2,7 +2,9 @@
 
 ## How to run - Guide
 
-- Open terminal<br>
+- Checkout this project
+- Open contining folder
+- Open terminal there<br>
 - Run folowing command: docker build --tag=mng-tool:latest .
 - Run folowing command: docker run -p8080:8080 mng-tool:latest
 - Note: Port 8080 might not be available on the machine where the container is launched. In this case, the mapping might not work and we need to choose a port that's still available.
