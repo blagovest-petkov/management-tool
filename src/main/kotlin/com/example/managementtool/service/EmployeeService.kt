@@ -58,11 +58,7 @@ class EmployeeService(private val employeeRepository: EmployeeRepository) {
         }
     }
 
-    private fun buildEmployeeHierarchy(
-        employeeList: List<Employee>,
-        supervisorId: Long?,
-        employeeDTO: EmployeeDTO
-    ): EmployeeDTO {
+    private fun buildEmployeeHierarchy(employeeList: List<Employee>, supervisorId: Long?, employeeDTO: EmployeeDTO): EmployeeDTO {
         employeeList.forEach {
             if (it.supervisorId?.equals(supervisorId) == true) {
                 employeeDTO.employeeSupervisorMap[it.name!!] =
