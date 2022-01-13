@@ -1,23 +1,24 @@
 package com.example.managementtool.model
 
-import java.util.*
+import org.hibernate.annotations.SQLInsert
+import javax.persistence.*
 
+@Entity
+@Table(name = "employee")
+// The order of the column is important and the id must be included. Hibernate firstly generate the id and after that insert it.
+@SQLInsert(sql = "INSERT INTO employee (name, supervisor_id, id) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
 class Employee {
 
-    constructor()
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", updatable = false, nullable = false)
+    var id: Long? = null
 
-    constructor(result: Array<Object>) {
-
-        id = result[0] as Int
-        name = result[1] as String
-        supervisorId = result[2] as Int
-    }
-
-    var id: Int? = null
-
+    @Column(name = "name", unique = true)
     var name: String? = null
 
-    var supervisorId: Int? = null
+    @Column(name = "supervisor_id", nullable = true)
+    var supervisorId: Long? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -33,9 +34,9 @@ class Employee {
     }
 
     override fun hashCode(): Int {
-        var result = id ?: 0
+        var result = id?.hashCode() ?: 0
         result = 31 * result + (name?.hashCode() ?: 0)
-        result = 31 * result + (supervisorId ?: 0)
+        result = 31 * result + (supervisorId?.hashCode() ?: 0)
         return result
     }
 

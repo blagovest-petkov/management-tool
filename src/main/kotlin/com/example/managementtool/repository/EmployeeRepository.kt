@@ -5,23 +5,25 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 
-interface EmployeeRepository {
+@Repository
+interface EmployeeRepository : CrudRepository<Employee, Long> {
 
     @Modifying
     @Query(
-        "UPDATE Employee " +
-            "SET supervisor_id = (SELECT ee.id FROM employee AS ee WHERE ee.id = :supervisorId) " +
-            "WHERE id = :employeeId " +
-            "AND (SELECT count(eee.id) FROM Employee AS eee WHERE eee.id = :supervisorId AND eee.supervisor_id = :employeeId) = 0",
+        "UPDATE employee " +
+                "SET supervisor_id = :supervisorId " +
+                "WHERE id = :employeeId AND (SELECT count(eee.id) FROM employee AS eee WHERE eee.id = :supervisorId AND eee.supervisor_id = :employeeId) = 0",
         nativeQuery = true
     )
-    fun updateEmployeeSupervisor(@Param("employeeId") employeeId: Int, @Param("supervisorId") supervisorId: Int): Int
+    fun updateEmployeeSupervisor(@Param("employeeId") employeeId: Long?, @Param("supervisorId") supervisorId: Long?): Int?
 
     @Query(
-        "SELECT e " +
-            "FROM Employee AS e " +
-            "WHERE e.supervisor IS NULL",
+        "SELECT count(*) " +
+                "FROM employee " +
+                "WHERE supervisor_id = 0",
+        nativeQuery = true
     )
-    fun findMostSeniorEmployee(): List<Employee>
+    fun findMostSeniorEmployeeCount(): Int
 }
