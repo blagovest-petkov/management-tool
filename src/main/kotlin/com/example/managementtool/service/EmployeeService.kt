@@ -26,16 +26,12 @@ class EmployeeService(private val employeeRepository: EmployeeRepository) {
         // Add all employee
         employeeNameSupervisorNameMap?.forEach {
             // Save employee
-            val employee = Employee()
-            employee.name = it.key
-            // If there is conflict save() return an object with the id of the non-existing object
-            employeeRepository.save(employee)
+            // If there is conflict saveOnConflictDoNothing() return an object with the id of the non-existing object
+            employeeRepository.saveOnConflictDoNothing(it.key, 0)
 
             // Save supervisor
-            val supervisor = Employee()
-            supervisor.name = it.value
-            // If there is conflict save() return an object with the id of the non-existing object
-            employeeRepository.save(supervisor)
+            // If there is conflict saveOnConflictDoNothing() return an object with the id of the non-existing object
+            employeeRepository.saveOnConflictDoNothing(it.value, 0)
         }
 
         // Get all inserted employees
@@ -43,8 +39,8 @@ class EmployeeService(private val employeeRepository: EmployeeRepository) {
 
         // Update employee's supervisors,
         employeeNameSupervisorNameMap?.forEach {
-            val employeeId = employeeNameEmployeeMap[it.key]?.id
-            val supervisorId = employeeNameEmployeeMap[it.value]?.id
+            val employeeId = employeeNameEmployeeMap[it.key]!!.id!!
+            val supervisorId = employeeNameEmployeeMap[it.value]!!.id!!
 
             // If an update did not happen this mean there is an ambiguous hierarchy
             if (employeeRepository.updateEmployeeSupervisor(employeeId, supervisorId) == 0) {

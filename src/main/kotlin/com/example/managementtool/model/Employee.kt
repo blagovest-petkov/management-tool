@@ -1,12 +1,11 @@
 package com.example.managementtool.model
 
-import org.hibernate.annotations.SQLInsert
 import javax.persistence.*
 
 @Entity
 @Table(name = "employee")
 // The order of the column is important and the id must be included. Hibernate firstly generate the id and after that insert it.
-@SQLInsert(sql = "INSERT INTO employee (name, supervisor_id, id) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
+//@SQLInsert(sql = "INSERT INTO employee (name, supervisor_id, id) VALUES (?, ?, ?) ON CONFLICT DO NOTHING")
 class Employee {
 
     @Id
