@@ -27,17 +27,17 @@ class EmployeeService(private val employeeRepository: EmployeeRepository) {
         employeeNameSupervisorNameMap?.forEach {
             // Save employee
             // If there is conflict saveOnConflictDoNothing() return an object with the id of the non-existing object
-            employeeRepository.saveOnConflictDoNothing(it.key, 0)
+            employeeRepository.save(Employee().apply { name = it.key })
 
             // Save supervisor
             // If there is conflict saveOnConflictDoNothing() return an object with the id of the non-existing object
-            employeeRepository.saveOnConflictDoNothing(it.value, 0)
+            employeeRepository.save(Employee().apply { name = it.value })
         }
 
         // Get all inserted employees
         val employeeNameEmployeeMap = employeeRepository.findAll().associateBy { it.name }
 
-        // Update employee's supervisors,
+        // Update employee's supervisors
         employeeNameSupervisorNameMap?.forEach {
             val employeeId = employeeNameEmployeeMap[it.key]!!.id!!
             val supervisorId = employeeNameEmployeeMap[it.value]!!.id!!

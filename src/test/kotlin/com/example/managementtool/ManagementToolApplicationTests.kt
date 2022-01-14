@@ -16,16 +16,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class ManagementToolApplicationTests {
-
+class ManagementToolApplicationTests(
     @LocalServerPort
-    private var port: Int = 0
+    private val port: Int,
+    @Autowired
+    private val mockMvc: MockMvc) {
+
 
     /*@Autowired
     private lateinit var testRestTemplate: TestRestTemplate*/
 
-    @Autowired
-    private lateinit var mockMvc: MockMvc
 
     @Test
     fun contextLoads() {
@@ -41,12 +41,41 @@ class ManagementToolApplicationTests {
         ).isEmpty()
     }*/
 
+    /**
+     * On empty db has to return 200 OK with empty body.
+     */
     @Test
-    fun  testGetEmployeeWithMock() {
+    fun testGetEmployeeWithMock() {
         this.mockMvc.perform(get("/employee").with(SecurityMockMvcRequestPostProcessors.httpBasic("user", "12345678")))
             .andDo(print())
             .andExpect(status().isOk)
             .andExpect(content().string(containsString("")))
+    }
+
+    /**
+     * The happy path with proper hierarchy.
+     */
+    @Test
+    fun testPostEmployeeProperHierarchy() {
+
+    }
+
+    /**
+     * Test if some employees are supervisor of each other.
+     * An exception has to be thrown.
+     */
+    @Test
+    fun testPostEmployeeAmbiguousHierarchy() {
+
+    }
+
+
+    /**
+     * Test if there is more than one most senior supervisor.
+     * An exception has to be thrown.
+     */
+    fun testPostEmployeeWithMoreThanOneMostSeniorSupervisor() {
+
     }
 
 

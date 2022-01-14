@@ -22,18 +22,19 @@ interface EmployeeRepository : CrudRepository<Employee, Long> {
     @Query(
         "SELECT count(*) " +
                 "FROM employee " +
-                "WHERE supervisor_id = 0",
+                "WHERE supervisor_id IS NULL",
         nativeQuery = true
     )
     fun findMostSeniorEmployeeCount(): Int
 
-    @Modifying
+    // You cannot insert null in nullable column from numeric type !!!
+   /* @Modifying
     @Query(
         value = "INSERT INTO Employee (name, supervisor_id) " +
                 "VALUES (:name, :supervisorId) " +
                 "ON CONFLICT DO NOTHING",
         nativeQuery = true
     )
-    // You cannot insert null in nullable column from numeric type !!!
-    fun saveOnConflictDoNothing(@Param("name") name: String, @Param("supervisorId") supervisorId: Long)
+
+    fun saveOnConflictDoNothing(@Param("name") name: String, @Param("supervisorId") supervisorId: Long)*/
 }
