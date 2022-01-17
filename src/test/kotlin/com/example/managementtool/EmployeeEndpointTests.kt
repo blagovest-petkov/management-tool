@@ -1,7 +1,12 @@
 package com.example.managementtool
 
+import com.example.managementtool.repository.EmployeeRepository
+import com.example.managementtool.service.EmployeeService
 import org.hamcrest.Matchers
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,15 +19,22 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import javax.transaction.Transactional
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
-class EmployeeEndpointTests(@Autowired private val mockMvc: MockMvc) {
+class EmployeeEndpointTests(
+    @Autowired private val mockMvc: MockMvc,
+    @Autowired private val employeeRepository: EmployeeRepository) {
+
+    var logger: Logger = LoggerFactory.getLogger(EmployeeService::class.java)
 
     companion object {
         private const val EMPLOYEE_URL = "/employee"
+    }
+
+    @BeforeEach
+    fun clearTable() {
+        employeeRepository.deleteAll()
     }
 
     /**
@@ -30,6 +42,7 @@ class EmployeeEndpointTests(@Autowired private val mockMvc: MockMvc) {
      */
     @Test
     fun testGetEmployeeWithMock() {
+        logger.info("testGetEmployeeWithMock")
         executeGetRequest("")
     }
 
@@ -38,31 +51,16 @@ class EmployeeEndpointTests(@Autowired private val mockMvc: MockMvc) {
      */
     @Test
     fun testPostEmployeeProperHierarchy() {
-        val body = "{\"Pete\":\"Nick\"}"
+        logger.info("testPostEmployeeProperHierarchy")
+        val body = "{\"Pete\":\"Nick\", \"Nick\":\"Sophie\"}"
         this.mockMvc.perform(post(EMPLOYEE_URL)
             .with(getSecurity())
             .contentType(MediaType.APPLICATION_JSON)
             .content(body))
             .andDo(print())
-            .andExpect(status().isOk)
+            .andExpect(status().isCreated)
 
-        executeGetRequest(body)
-    }
-
-    /**
-     * The happy path with proper hierarchy.
-     */
-    @Test
-    fun testPostEmployeeProperHierarchyWithOnConflictDoNothing() {
-        val body = "{\"Pete\":\"Nick\", \"Barbara\":\"Nick\", \"Nick\":\"Sophie\", \"Sophie\":\"Jonas\"}"
-        this.mockMvc.perform(post(EMPLOYEE_URL)
-            .with(getSecurity())
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(body))
-            .andDo(print())
-            .andExpect(status().isOk)
-
-        executeGetRequest(body)
+        executeGetRequest("{\"Sophie\":{\"Nick\":{\"Pete\":{}}}}")
     }
 
     /**
@@ -71,6 +69,7 @@ class EmployeeEndpointTests(@Autowired private val mockMvc: MockMvc) {
      */
     @Test
     fun testPostEmployeeAmbiguousHierarchy() {
+        logger.info("testPostEmployeeAmbiguousHierarchy")
         val body = "{\"Pete\":\"Nick\",\"Nick\":\"Pete\"}"
         this.mockMvc.perform(post(EMPLOYEE_URL)
             .with(getSecurity())
@@ -89,6 +88,7 @@ class EmployeeEndpointTests(@Autowired private val mockMvc: MockMvc) {
      */
     @Test
     fun testPostEmployeeWithMoreThanOneMostSeniorSupervisor() {
+        logger.info("testPostEmployeeWithMoreThanOneMostSeniorSupervisor")
         val body = "{\"Pete\":\"Nick\",\"Barbara\":\"Sophie\"}"
         this.mockMvc.perform(post(EMPLOYEE_URL)
             .with(getSecurity())

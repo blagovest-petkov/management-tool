@@ -23,24 +23,29 @@ class EmployeeService(private val employeeRepository: EmployeeRepository) {
     @Throws(SQLException::class)
     @Transactional(rollbackFor = [SQLException::class])
     fun addEmployees(employeeNameSupervisorNameMap: Map<String, String>?) {
+        val employeeNameToIdMap: MutableMap<String, Long> = HashMap()
         // Add all employee
         employeeNameSupervisorNameMap?.forEach {
             // Save employee
             // If there is conflict saveOnConflictDoNothing() return an object with the id of the non-existing object
-            employeeRepository.save(Employee().apply { name = it.key })
+            val employee = employeeRepository.save(Employee().apply { name = it.key })
 
             // Save supervisor
             // If there is conflict saveOnConflictDoNothing() return an object with the id of the non-existing object
-            employeeRepository.save(Employee().apply { name = it.value })
-        }
+            val supervisor = employeeRepository.save(Employee().apply { name = it.value })
 
-        // Get all inserted employees
-        val employeeNameEmployeeMap = employeeRepository.findAll().associateBy { it.name }
+            if (!employeeNameToIdMap.containsKey(employee.name)) {
+                employeeNameToIdMap[employee.name!!] = employee.id!!
+            }
+            if (!employeeNameToIdMap.containsKey(supervisor.name)) {
+                employeeNameToIdMap[supervisor.name!!] = supervisor.id!!
+            }
+        }
 
         // Update employee's supervisors
         employeeNameSupervisorNameMap?.forEach {
-            val employeeId = employeeNameEmployeeMap[it.key]!!.id!!
-            val supervisorId = employeeNameEmployeeMap[it.value]!!.id!!
+            val employeeId = employeeNameToIdMap[it.key]!!
+            val supervisorId = employeeNameToIdMap[it.value]!!
 
             // If an update did not happen this mean there is an ambiguous hierarchy
             if (employeeRepository.updateEmployeeSupervisor(employeeId, supervisorId) == 0) {
@@ -56,7 +61,7 @@ class EmployeeService(private val employeeRepository: EmployeeRepository) {
 
     private fun buildEmployeeHierarchy(employeeList: List<Employee>, supervisorId: Long?, employeeDTO: EmployeeDTO): EmployeeDTO {
         employeeList.forEach {
-            if (it.supervisorId?.equals(supervisorId) == true) {
+            if ((supervisorId == null && it.supervisorId == null) || it.supervisorId?.equals(supervisorId) == true) {
                 employeeDTO.employeeSupervisorMap[it.name!!] =
                     buildEmployeeHierarchy(employeeList, it.id, EmployeeDTO())
             }

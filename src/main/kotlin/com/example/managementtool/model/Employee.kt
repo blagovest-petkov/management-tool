@@ -41,6 +41,6 @@ class Employee {
     }
 
     override fun toString(): String {
-        return "Employee(id=$id, name=$name, supervisorId=$supervisorId)"
+        return "\nEmployee(id=$id, name=$name, supervisorId=$supervisorId)"
     }
 }
